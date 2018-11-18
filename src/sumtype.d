@@ -750,7 +750,7 @@ private template overloadHandler(alias fun)
 	enum overloadHandler = OverloadHandler.init;
 }
 
-// Ensures all of fun's overloads are included in a handler
+// A handler that includes all overloads of fun, if applicable
 private template handleOverloads(alias fun)
 {
 	// Delegates and function pointers can't have overloads
