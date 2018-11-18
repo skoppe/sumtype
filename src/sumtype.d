@@ -739,10 +739,10 @@ private template overloadHandler(alias fun)
 	{
 		import std.traits: Parameters, ReturnType;
 
-		static foreach(ovl; FunctionOverloads!fun) {
-			ReturnType!ovl opCall(Parameters!ovl args)
+		static foreach(overload; FunctionOverloads!fun) {
+			ReturnType!overload opCall(Parameters!overload args)
 			{
-				return ovl(args);
+				return overload(args);
 			}
 		}
 	}
