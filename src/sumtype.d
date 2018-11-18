@@ -718,6 +718,19 @@ class MatchException : Exception
 	}
 }
 
+import std.traits: isFunction;
+
+// An AliasSeq of a function's overloads
+private template FunctionOverloads(alias fun)
+	if (isFunction!fun)
+{
+	import std.meta: AliasSeq;
+
+	alias FunctionOverloads = AliasSeq!(__traits(getOverloads,
+		__traits(parent, fun), __traits(identifier, fun)
+	));
+}
+
 // A handler with an opCall overload for each overload of fun
 private template overloadHandler(alias fun)
 	if (isFunction!fun)
@@ -725,13 +738,8 @@ private template overloadHandler(alias fun)
 	struct OverloadHandler
 	{
 		import std.traits: Parameters, ReturnType;
-		import std.meta: AliasSeq;
 
-		alias overloads = AliasSeq!(__traits(getOverloads,
-			__traits(parent, fun), __traits(identifier, fun)
-		));
-
-		static foreach(ovl; overloads) {
+		static foreach(ovl; FunctionOverloads!fun) {
 			ReturnType!ovl opCall(Parameters!ovl args)
 			{
 				return ovl(args);
@@ -745,8 +753,6 @@ private template overloadHandler(alias fun)
 // Ensures all of fun's overloads are included in a handler
 private template handleOverloads(alias fun)
 {
-	import std.traits: isFunction;
-
 	// Delegates and function pointers can't have overloads
 	static if (isFunction!fun) {
 		alias handleOverloads = overloadHandler!fun;
