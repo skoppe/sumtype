@@ -720,6 +720,7 @@ class MatchException : Exception
 
 // A handler with an opCall overload for each overload of fun
 private template overloadHandler(alias fun)
+	if (isFunction!fun)
 {
 	struct OverloadHandler
 	{
